@@ -20,21 +20,29 @@ from sklearn.tree import export_graphviz
 #     pydotplus = None
 
 
-def liftChart(predicted: list[float], *, title: str = 'Decile-wise Lift Chart',
-              labelBars: bool = True, ax: Axes | None = None, figsize: Iterable[float] = None):
-    """ Create a decile-wise lift chart using predicted values 
+def liftChart(data: pd.DataFrame, ranking: str, actual: str, *,
+              title: str = 'Decile Lift Chart', labelBars: bool = True,
+              ax: Axes | None = None, figsize: Iterable[float] = None):
+    """ Create a decile lift chart using ranking and predicted values 
 
     Input: 
-        predictions: must be sorted by probability
-        ax (optional): axis for matplotlib graph
+        data: DataFrame with ranking and actual values
+        ranking: column name for ranking (predicted values or probability)
+        actual: column name for actual values
         title (optional): set to None to suppress title
-        labelBars (optional): set to False to avoid mean response labels on bar chart 
+        labelBars (optional): set to False to avoid mean response labels on bar chart
+        ax (optional): axis for matplotlib graph
+        figsize (optional): size of matplotlib graph
     """
-    # group the sorted predictions into 10 roughly equal groups and calculate the mean
-    groups = [int(10 * i / len(predicted)) for i in range(len(predicted))]
-    meanPercentile = predicted.groupby(groups).mean()
+    data = data.sort_values(by=[ranking], ascending=False)
+    ranked_actual = data[actual]
+
+    # group the sorted actual values into 10 roughly equal groups and calculate the mean
+    groups = [int(10 * i / len(ranked_actual))
+              for i in range(len(ranked_actual))]
+    meanPercentile = ranked_actual.groupby(groups).mean()
     # divide by the mean prediction to get the mean response
-    meanResponse = meanPercentile / predicted.mean()
+    meanResponse = meanPercentile / ranked_actual.mean()
     meanResponse.index = (meanResponse.index + 1) * 10
 
     ax = meanResponse.plot.bar(color='C0', ax=ax, figsize=figsize)
