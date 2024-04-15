@@ -20,7 +20,7 @@ from sklearn.tree import export_graphviz
 #     pydotplus = None
 
 
-def liftChart(data: pd.DataFrame, *, ranking: str, actual: str,
+def liftChart(data: pd.DataFrame, *, ranking: str | None = None, actual: str | None=None,
               title: str = 'Decile Lift Chart', labelBars: bool = True,
               ax: Axes | None = None, figsize: Iterable[float] = None):
     """ Create a decile lift chart using ranking and predicted values 
@@ -34,6 +34,9 @@ def liftChart(data: pd.DataFrame, *, ranking: str, actual: str,
         ax (optional): axis for matplotlib graph
         figsize (optional): size of matplotlib graph
     """
+    if ranking is None or actual is None:
+        raise ValueError('Column names for ranking and actual must be provided')
+
     data = data.sort_values(by=[ranking], ascending=False)
     ranked_actual = data[actual]
 
