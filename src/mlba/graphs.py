@@ -63,7 +63,7 @@ def liftChart(data: pd.DataFrame, *, ranking: str | None = None, actual: str | N
 
 
 def gainsChart(data: pd.DataFrame, *, ranking: str | None = None, actual: str | None=None,
-               color: str = 'C0', title='Cumulative Gains Chart',
+               color: str = 'C0', title='Cumulative Gains Chart', label: str | None = None,
                ax: Axes | None = None, figsize: Iterable[float] | None = None):
     """ Create a gains chart using ranking and predicted values 
 
