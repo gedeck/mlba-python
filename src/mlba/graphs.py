@@ -51,7 +51,7 @@ def liftChart(data: pd.DataFrame, *, ranking: str | None = None, actual: str | N
     ax = meanResponse.plot.bar(color='C0', ax=ax, figsize=figsize)
     ax.set_ylim(0, 1.12 * meanResponse.max() if labelBars else None)
     ax.set_xlabel('Percentile')
-    ax.set_ylabel('Lift')
+    ax.set_ylabel('Decile mean / global mean')
     if title:
         ax.set_title(title)
 
@@ -62,15 +62,24 @@ def liftChart(data: pd.DataFrame, *, ranking: str | None = None, actual: str | N
     return ax
 
 
-def gainsChart(gains, color='C0', label=None, ax=None, figsize=None):
-    """ Create a gains chart using predicted values 
+def gainsChart(data: pd.DataFrame, *, ranking: str | None = None, actual: str | None=None,
+               color: str = 'C0', label: str | None = None, ax: Axes | None = None,
+               figsize: Iterable[float] | None = None):
+    """ Create a gains chart using ranking and predicted values 
 
     Input: 
-        gains: must be sorted by probability
+        data: DataFrame with ranking and actual values
+        ranking: column name for ranking (predicted values or probability)
+        actual: column name for actual values
         color (optional): color of graph
         ax (optional): axis for matplotlib graph
         figsize (optional): size of matplotlib graph
     """
+    if ranking is None or actual is None:
+        raise ValueError('Column names for ranking and actual must be provided')
+    data = data.sort_values(by=[ranking], ascending=False)
+    gains = data[actual] 
+
     nTotal = len(gains)  # number of records
     nActual = gains.sum()  # number of desired records
 
