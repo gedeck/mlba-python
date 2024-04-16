@@ -95,6 +95,7 @@ def gainsChart(data: pd.DataFrame, *, ranking: str | None = None, actual: str | 
 
     # Add line for random gain
     ax.plot([0, nTotal], [0, nActual], linestyle='--', color='k')
+    ax.set_title(title)
     ax.set_xlabel('# records')
     ax.set_ylabel('# cumulative gains')
     return ax
