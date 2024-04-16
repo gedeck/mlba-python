@@ -100,17 +100,14 @@ def classificationSummary(*, y_true, y_pred, class_names=None):
         y_pred: predicted values
         class_names (optional): list of class names
     """
-    confusionMatrix = confusion_matrix(y_true, y_pred)
+    labels = class_names or sorted({*y_true, *y_pred})
+    confusionMatrix = confusion_matrix(y_true, y_pred, labels=labels)
     accuracy = accuracy_score(y_true, y_pred)
 
     print('Confusion Matrix (Accuracy {:.4f})\n'.format(accuracy))
 
     # Pretty-print confusion matrix
     cm = confusionMatrix
-
-    labels = class_names
-    if labels is None:
-        labels = [str(i) for i in range(len(cm))]
 
     # Convert the confusion matrix and labels to strings
     cm = [[str(i) for i in row] for row in cm]
