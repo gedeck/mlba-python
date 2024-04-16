@@ -92,7 +92,7 @@ def _toArray(y):
     return y
 
 
-def classificationSummary(y_true, y_pred, class_names=None):
+def classificationSummary(*, y_true, y_pred, class_names=None):
     """ Print a summary of classification performance
 
     Input:
