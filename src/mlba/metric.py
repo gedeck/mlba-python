@@ -59,30 +59,48 @@ def BIC_score(y_true, y_pred, model=None, df=None):
     return aic - 2 * (p + 1) + math.log(n) * (p + 1)
 
 
-def regressionSummary(y_true, y_pred):
+def regressionSummary(*, y_true, y_pred):
     """ print regression performance metrics 
 
     Input:
         y_true: actual values
         y_pred: predicted values
     """
+    metrics = regressionMetrics(y_true=y_true, y_pred=y_pred)
+    label = {
+        'ME': 'Mean Error (ME)',
+        'RMSE': 'Root Mean Squared Error (RMSE)',
+        'MAE': 'Mean Absolute Error (MAE)',
+        'MPE': 'Mean Percentage Error (MPE)',
+        'MAPE': 'Mean Absolute Percentage Error (MAPE)',
+    }
+    fmt1 = '{{:>{}}} : {{:.4f}}'.format(max(len(m[0]) for m in metrics))
+    print('\nRegression statistics\n')
+    for metric, value in metrics.items():
+        print(fmt1.format(label[metric], value))
+
+
+def regressionMetrics(*, y_true, y_pred):
+    """ calculate and return regression performance metrics 
+
+    Input:
+        y_true: actual values
+        y_pred: predicted values
+    Output:
+        dictionary of regression metrics
+    """
     y_true = _toArray(y_true)
     y_pred = _toArray(y_pred)
     y_res = y_true - y_pred
-    metrics = [
-        ('Mean Error (ME)', sum(y_res) / len(y_res)),
-        ('Root Mean Squared Error (RMSE)', math.sqrt(mean_squared_error(y_true, y_pred))),
-        ('Mean Absolute Error (MAE)', sum(abs(y_res)) / len(y_res)),
-    ]
+    metrics = {
+        'ME': sum(y_res) / len(y_res),
+        'RMSE': math.sqrt(mean_squared_error(y_true, y_pred)),
+        'MAE': sum(abs(y_res)) / len(y_res),
+    }
     if all(yt != 0 for yt in y_true):
-        metrics.extend([
-            ('Mean Percentage Error (MPE)', 100 * sum(y_res / y_true) / len(y_res)),
-            ('Mean Absolute Percentage Error (MAPE)', 100 * sum(abs(y_res / y_true) / len(y_res))),
-        ])
-    fmt1 = '{{:>{}}} : {{:.4f}}'.format(max(len(m[0]) for m in metrics))
-    print('\nRegression statistics\n')
-    for metric, value in metrics:
-        print(fmt1.format(metric, value))
+        metrics['MPE'] = 100 * sum(y_res / y_true) / len(y_res)
+        metrics['MAPE'] = 100 * sum(abs(y_res / y_true) / len(y_res))
+    return metrics
 
 
 def _toArray(y):
@@ -100,7 +118,9 @@ def classificationSummary(*, y_true, y_pred, class_names=None):
         y_pred: predicted values
         class_names (optional): list of class names
     """
-    labels = class_names or sorted({*y_true, *y_pred})
+    if class_names is None:
+        class_names = sorted({*y_true, *y_pred})
+    labels = class_names
     confusionMatrix = confusion_matrix(y_true, y_pred, labels=labels)
     accuracy = accuracy_score(y_true, y_pred)
 
