@@ -18,13 +18,15 @@ class TestGraphs(unittest.TestCase):
     def test_liftChart(self):
         data = pd.Series([7] * 10 + [2.5] * 10 + [0.5]
                          * 10 + [0.25] * 20 + [0.1] * 50)
-        ax = liftChart(data)
+        df = pd.DataFrame({'ranking': data, 'actual': range(len(data))})
+        ax = liftChart(df, actual='actual', ranking='ranking')
         self.assertIsNotNone(ax)
 
     def test_gainsChart(self):
         data = pd.Series([7] * 10 + [2.5] * 10 + [0.5]
                          * 10 + [0.25] * 20 + [0.1] * 50)
-        ax = gainsChart(data)
+        df = pd.DataFrame({'ranking': data, 'actual': range(len(data))})
+        ax = gainsChart(df, actual='actual', ranking='ranking')
         self.assertIsNotNone(ax)
 
     def test_textDecisionTree(self):

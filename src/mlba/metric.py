@@ -25,7 +25,7 @@ def adjusted_r2_score(y_true, y_pred, model):
     return 1 - (1 - r2) * (n - 1) / (n - p - 1)
 
 
-def AIC_score(y_true, y_pred, model=None, df=None):
+def AIC_score(*, y_true, y_pred, model=None, df=None):
     """ calculate Akaike Information Criterion (AIC) 
     Input:
         y_true: actual values
@@ -39,13 +39,16 @@ def AIC_score(y_true, y_pred, model=None, df=None):
         raise ValueError('You need to provide either model or df')
     n = len(y_pred)
     p = len(model.coef_) + 1 if df is None else df
-    resid = np.array(y_true) - np.array(y_pred)
-    sse = np.sum(resid ** 2)
+    if isinstance(list(y_true)[0], str):
+        sse = sum(yt != yp for yt, yp in zip(y_true, y_pred))
+    else:
+        resid = np.array(y_true) - np.array(y_pred)
+        sse = np.sum(resid ** 2)
     constant = n + n * np.log(2 * np.pi)
     return n * math.log(sse / n) + constant + 2 * (p + 1)
 
 
-def BIC_score(y_true, y_pred, model=None, df=None):
+def BIC_score(*, y_true, y_pred, model=None, df=None):
     """ calculate Schwartz's Bayesian Information Criterion (AIC) 
     Input:
         y_true: actual values
@@ -53,7 +56,7 @@ def BIC_score(y_true, y_pred, model=None, df=None):
         model: predictive model
         df (optional): degrees of freedom of model
     """
-    aic = AIC_score(y_true, y_pred, model=model, df=df)
+    aic = AIC_score(y_true=y_true, y_pred=y_pred, model=model, df=df)
     p = len(model.coef_) + 1 if df is None else df
     n = len(y_pred)
     return aic - 2 * (p + 1) + math.log(n) * (p + 1)

@@ -6,22 +6,24 @@ Applications in Python"
 '''
 from collections.abc import Iterable
 import io
+from typing import Literal
 import pandas as pd
 import numpy as np
+import matplotlib.pyplot as plt
 from matplotlib.axes import Axes
 from sklearn.tree import export_graphviz
-# try:
-#     from IPython.display import Image
-# except ImportError:
-#     Image = None
-# try:
-#     import pydotplus
-# except ImportError:
-#     pydotplus = None
+try:
+    from IPython.display import Image
+except ImportError:
+    Image = None
+try:
+    import pydotplus
+except ImportError:
+    pydotplus = None
 
 
-def liftChart(data: pd.DataFrame, *, ranking: str | None = None, actual: str | None=None,
-              title: str = 'Decile Lift Chart', labelBars: bool = True,
+def liftChart(data: pd.DataFrame, *, ranking: str | None = None, actual: str | None = None,
+              title: str = 'Decile-wise Lift Chart', labelBars: bool = True,
               ax: Axes | None = None, figsize: Iterable[float] = None):
     """ Create a decile lift chart using ranking and predicted values 
 
@@ -62,8 +64,10 @@ def liftChart(data: pd.DataFrame, *, ranking: str | None = None, actual: str | N
     return ax
 
 
-def gainsChart(data: pd.DataFrame, *, ranking: str | None = None, actual: str | None=None,
+def gainsChart(data: pd.DataFrame, *, ranking: str | None = None, actual: str | None = None,
+               event_level: int | str = 1, type: Literal['classification', 'regression'] = 'classification',
                color: str = 'C0', title='Cumulative Gains Chart', label: str | None = None,
+               show_counts: bool = False,
                ax: Axes | None = None, figsize: Iterable[float] | None = None):
     """ Create a gains chart using ranking and predicted values 
 
@@ -71,33 +75,57 @@ def gainsChart(data: pd.DataFrame, *, ranking: str | None = None, actual: str | 
         data: DataFrame with ranking and actual values
         ranking: column name for ranking (predicted values or probability)
         actual: column name for actual values
+        event_level: outcome of interest for the actual values (default 1)
+        type: classification (default) or regression 
         color (optional): color of graph
         title (optional): set to None to suppress title
+        show_counts (optional): show counts of cumulative gains (classification only)
         ax (optional): axis for matplotlib graph
         figsize (optional): size of matplotlib graph
     """
     if ranking is None or actual is None:
         raise ValueError('Column names for ranking and actual must be provided')
-    data = data.sort_values(by=[ranking], ascending=False)
-    gains = data[actual] 
-
-    nTotal = len(gains)  # number of records
-    nActual = gains.sum()  # number of desired records
+    data = data.sort_values(by=[ranking], ascending=False, ignore_index=True)
+    if type == 'classification':
+        gains = pd.Series([1 if g == event_level else 0 for g in data[actual]])
+        nActual = gains.sum()  # number of desired records
+        nTotal = len(gains)  # number of records
+        optimal_gains = nActual / nTotal
+    else:
+        gains = data[actual]
+        # nActual = len(gains)
+        nActual = gains.sum()
+        nTotal = len(gains)  # number of records
+        optimal_gains = 1.0
 
     # get cumulative sum of gains and convert to percentage
     # Note the additional 0 at the front
     cumGains = pd.concat([pd.Series([0]), gains.cumsum()])
     gains_df = pd.DataFrame(
-        {'records': list(range(len(gains) + 1)), 'cumGains': cumGains})
+        {'records': list(range(nTotal + 1)), 'cumGains': cumGains})
 
+    if type == 'classification' and not show_counts:
+        gains_df['records'] = 100 * gains_df['records'] / nTotal
+        gains_df['cumGains'] = 100 * gains_df['cumGains'] / nActual
+        nTotal = 100
+        nActual = 100
+
+    if ax is None:
+        _, ax = plt.subplots(figsize=figsize)
+    if type == 'classification':
+        ax.plot([0, optimal_gains * nTotal, nTotal], [0, nActual, nActual], color='lightgrey')
     ax = gains_df.plot(x='records', y='cumGains', color=color, label=label, legend=False,
-                       ax=ax, figsize=figsize)
+                       ax=ax)
 
     # Add line for random gain
     ax.plot([0, nTotal], [0, nActual], linestyle='--', color='k')
     ax.set_title(title)
-    ax.set_xlabel('# records')
-    ax.set_ylabel('# cumulative gains')
+    if show_counts:
+        ax.set_xlabel('# records')
+        ax.set_ylabel('# cumulative gains')
+    else:
+        ax.set_xlabel('Percent of cases')
+        ax.set_ylabel('Percent of samples found')
     return ax
 
 

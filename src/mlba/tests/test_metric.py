@@ -1,14 +1,15 @@
 '''
-Utility functions for "Data Mining for Business Analytics: Concepts, Techniques, and 
+Utility functions for "Data Mining for Business Analytics: Concepts, Techniques, and
 Applications in Python"
 
-(c) 2019, 2024 Galit Shmueli, Peter C. Bruce, Peter Gedeck 
+(c) 2019, 2024 Galit Shmueli, Peter C. Bruce, Peter Gedeck
 '''
 import unittest
 from collections import namedtuple
 from contextlib import redirect_stdout
 from io import StringIO
 
+import pandas as pd
 from sklearn.metrics import r2_score
 
 from mlba import adjusted_r2_score, AIC_score, BIC_score
@@ -50,32 +51,43 @@ class TestMetric(unittest.TestCase):
         y_pred = [1, 3, 2, 5, 4]
 
         self.assertAlmostEqual(
-            AIC_score(y_true, y_pred, MockModel(coef_=[1] * 2)),
+            AIC_score(y_true=y_true, y_pred=y_pred, model=MockModel(coef_=[1] * 2)),
             21.0736, places=3)
 
         self.assertAlmostEqual(
-            AIC_score(y_true, y_pred, df=3),
-            AIC_score(y_true, y_pred, MockModel(coef_=[1] * 2)), places=3)
+            AIC_score(y_true=y_true, y_pred=y_pred, df=3),
+            AIC_score(y_true=y_true, y_pred=y_pred, model=MockModel(coef_=[1] * 2)), places=3)
 
         self.assertGreater(
-            AIC_score(y_true, y_pred, df=3),
-            AIC_score(y_true, y_pred, df=2))
+            AIC_score(y_true=y_true, y_pred=y_pred, df=3),
+            AIC_score(y_true=y_true, y_pred=y_pred, df=2))
+
+    def test_AIC_score_classification(self):
+        y_true = ['b' if y == 1 else 'a' for y in [1, 0, 0, 1, 1, 1]]
+        y_pred = ['b' if y == 1 else 'a' for y in [1, 0, 1, 1, 0, 0]]
+        self.assertAlmostEqual(
+            AIC_score(y_true=y_true, y_pred=y_pred, df=3),
+            20.868379, places=3)
+
+        self.assertAlmostEqual(
+            AIC_score(y_true=pd.Series(y_true), y_pred=pd.Series(y_pred), df=3),
+            20.868379, places=3)
 
     def test_BIC_score(self):
         y_true = [1, 2, 3, 4, 5]
         y_pred = [1, 3, 2, 5, 4]
 
         self.assertAlmostEqual(
-            BIC_score(y_true, y_pred, MockModel(coef_=[1] * 2)),
+            BIC_score(y_true=y_true, y_pred=y_pred, model=MockModel(coef_=[1] * 2)),
             19.51141, places=3)
 
         self.assertAlmostEqual(
-            BIC_score(y_true, y_pred, df=3),
-            BIC_score(y_true, y_pred, MockModel(coef_=[1] * 2)), places=3)
+            BIC_score(y_true=y_true, y_pred=y_pred, df=3),
+            BIC_score(y_true=y_true, y_pred=y_pred, model=MockModel(coef_=[1] * 2)), places=3)
 
         self.assertGreater(
-            BIC_score(y_true, y_pred, df=3),
-            BIC_score(y_true, y_pred, df=2))
+            BIC_score(y_true=y_true, y_pred=y_pred, df=3),
+            BIC_score(y_true=y_true, y_pred=y_pred, df=2))
 
     def test_regressionSummary(self):
         y_true = [1, 2, 3, 4, 5]
@@ -83,7 +95,7 @@ class TestMetric(unittest.TestCase):
 
         out = StringIO()
         with redirect_stdout(out):
-            regressionSummary(y_true, y_pred)
+            regressionSummary(y_true=y_true, y_pred=y_pred)
         s = out.getvalue()
         self.assertIn('Regression statistics', s)
         self.assertIn('(ME) : 0.0000', s)
@@ -97,7 +109,7 @@ class TestMetric(unittest.TestCase):
 
         out = StringIO()
         with redirect_stdout(out):
-            regressionSummary(y_true, y_pred)
+            regressionSummary(y_true=y_true, y_pred=y_pred)
         s = out.getvalue()
         self.assertIn('Regression statistics', s)
         self.assertIn('(ME) : 0.0000', s)
@@ -111,7 +123,7 @@ class TestMetric(unittest.TestCase):
 
         out = StringIO()
         with redirect_stdout(out):
-            regressionSummary(y_true, y_pred)
+            regressionSummary(y_true=y_true, y_pred=y_pred)
         s = out.getvalue()
         self.assertIn('Regression statistics', s)
         self.assertIn('(ME) : 0.0000', s)
@@ -121,12 +133,12 @@ class TestMetric(unittest.TestCase):
         self.assertIn('(MAPE) : 25.6667', s)
 
     def test_classificationSummary(self):
-        y_true = [1, 0, 0, 1, 1, 1]
-        y_pred = [1, 0, 1, 1, 0, 0]
+        y_true = ['b' if y == 1 else 'a' for y in [1, 0, 0, 1, 1, 1]]
+        y_pred = ['b' if y == 1 else 'a' for y in [1, 0, 1, 1, 0, 0]]
 
         out = StringIO()
         with redirect_stdout(out):
-            classificationSummary(y_true, y_pred, class_names=['a', 'b'])
+            classificationSummary(y_true=y_true, y_pred=y_pred, class_names=['a', 'b'])
         s = out.getvalue()
 
         self.assertIn('Confusion Matrix', s)
