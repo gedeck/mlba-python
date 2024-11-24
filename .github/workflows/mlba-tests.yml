@@ -36,12 +36,12 @@ jobs:
       - name: Install dependencies
         run: |
           pip3 install -U pip
-          pip3 install -r requirements.txt
+          # pip3 install -r requirements.txt
           pip3 install mypy
       
       - name: versions
         run: pip3 freeze
       
       - name: Run mypy
-        run: mypy ./src
+        run: mypy --install-types ./src
     
