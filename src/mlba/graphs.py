@@ -1,18 +1,21 @@
-'''
-Utility functions for "Data Mining for Business Analytics: Concepts, Techniques, and 
-Applications in Python"
+"""
+Utility functions for
 
-(c) 2019, 2024 Galit Shmueli, Peter C. Bruce, Peter Gedeck 
-'''
+Machine Learning for Business Analytics:
+Concepts, Techniques, and Applications in Python
+
+(c) 2019-2025 Galit Shmueli, Peter C. Bruce, Peter Gedeck
+"""
 from collections.abc import Iterable
 import io
+from os import PathLike
 from typing import Literal
 from tempfile import TemporaryDirectory
 import pandas as pd
 import numpy as np
 import matplotlib.pyplot as plt
 from matplotlib.axes import Axes
-from sklearn.tree import export_graphviz
+from sklearn.tree import DecisionTreeClassifier, export_graphviz
 try:
     from IPython.display import Image
 except ImportError:
@@ -25,10 +28,10 @@ except ImportError:
 
 def liftChart(data: pd.DataFrame, *, ranking: str | None = None, actual: str | None = None,
               title: str = 'Decile-wise lift chart', labelBars: bool = True,
-              ax: Axes | None = None, figsize: Iterable[float] = None):
-    """ Create a decile lift chart using ranking and predicted values 
+              ax: Axes | None = None, figsize: Iterable[float] | None = None) -> Axes:
+    """ Create a decile lift chart using ranking and predicted values
 
-    Input: 
+    Input:
         data: DataFrame with ranking and actual values
         ranking: column name for ranking (predicted values or probability)
         actual: column name for actual values
@@ -60,24 +63,22 @@ def liftChart(data: pd.DataFrame, *, ranking: str | None = None, actual: str | N
 
     if labelBars:
         for p in ax.patches:
-            ax.annotate('{:.1f}'.format(p.get_height()),
-                        (p.get_x(), p.get_height() + 0.1))
+            ax.annotate(f'{p.get_height():.1f}', (p.get_x(), p.get_height() + 0.1))
     return ax
 
 
 def gainsChart(data: pd.DataFrame, *, ranking: str | None = None, actual: str | None = None,
-               event_level: int | str = 1, type: Literal['classification', 'regression'] = 'classification',
-               color: str = 'C0', title='Cumulative gains chart', label: str | None = None,
-               show_counts: bool = False,
-               ax: Axes | None = None, figsize: Iterable[float] | None = None):
-    """ Create a gains chart using ranking and predicted values 
+               event_level: int | str = 1, type: Literal['classification', 'regression'] = 'classification',  # noqa: A002
+               color: str = 'C0', title: str = 'Cumulative gains chart', label: str | None = None,
+               show_counts: bool = False, ax: Axes | None = None, figsize: Iterable[float] | None = None) -> Axes:
+    """ Create a gains chart using ranking and predicted values
 
-    Input: 
+    Input:
         data: DataFrame with ranking and actual values
         ranking: column name for ranking (predicted values or probability)
         actual: column name for actual values
         event_level: outcome of interest for the actual values (default 1)
-        type: classification (default) or regression 
+        type: classification (default) or regression
         color (optional): color of graph
         title (optional): set to None to suppress title
         show_counts (optional): show counts of cumulative gains (classification only)
@@ -130,16 +131,18 @@ def gainsChart(data: pd.DataFrame, *, ranking: str | None = None, actual: str | 
     return ax
 
 
-def plotDecisionTree(decisionTree, feature_names=None, class_names=None, impurity=False, label='root',
-                     max_depth=None, rotate=False, pdfFile=None):
-    """ Create a plot of the scikit-learn decision tree and show in the Jupyter notebooke 
+def plotDecisionTree(decisionTree: DecisionTreeClassifier, *, feature_names: list[str] | None = None,
+                     class_names: list[str] | None = None, impurity: bool = False, label: str = 'root',
+                     max_depth: int | None = None, rotate: bool = False,
+                     pdfFile: PathLike | str | None = None) -> Image:
+    """ Create a plot of the scikit-learn decision tree and show in the Jupyter notebook
     Input:
         decisionTree: scikit-learn decision tree
         feature_names (optional): variable names
         class_names (optional): class names, only relevant for classification trees
         impurity (optional): show node impurity
         label (optional): only show labels at the root
-        max_depth (optional): limit 
+        max_depth (optional): limit
         rotate (optional): rotate the layout of the graph
         pdfFile (optional): provide pathname to create a PDF file of the graph
     """
@@ -159,16 +162,15 @@ def plotDecisionTree(decisionTree, feature_names=None, class_names=None, impurit
             graph.render('dot', directory=tempdir, format='pdf', outfile=pdfFile)
         return Image(graph.render('dot', directory=tempdir, format='png'))
 
-# Taken from scikit-learn documentation
 
-
-def textDecisionTree(decisionTree, indent='  ', as_ratio=True):
-    """ Create a text representation of the scikit-learn decision tree 
+def textDecisionTree(decisionTree: DecisionTreeClassifier, indent: str = '  ', *, as_ratio: bool = True) -> str:
+    """ Create a text representation of the scikit-learn decision tree
     Input:
         decisionTree: scikit-learn decision tree
-        as_ratio: show the composition of the leaf nodes as ratio (default) instead of counts 
+        as_ratio: show the composition of the leaf nodes as ratio (default) instead of counts
         indent: indentation (default two spaces)
     """
+    # Taken from scikit-learn documentation
     n_nodes = decisionTree.tree_.node_count
     children_left = decisionTree.tree_.children_left
     children_right = decisionTree.tree_.children_right
@@ -184,7 +186,7 @@ def textDecisionTree(decisionTree, indent='  ', as_ratio=True):
         node_depth[node_id] = parent_depth + 1
         # If we have a test node
         if (children_left[node_id] != children_right[node_id]):
-            stack.append((children_left[node_id], parent_depth + 1))
+            stack.append((children_left[node_id], parent_depth + 1))  # noqa: FURB113
             stack.append((children_right[node_id], parent_depth + 1))
         else:
             is_leaves[node_id] = True

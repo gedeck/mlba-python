@@ -40,6 +40,7 @@ lint.ignore = [
     "SLF001",
     "T201",  # print statements
     "PLR0124",
+    "PYI024",
 ]
 lint.extend-select = [
     "F",

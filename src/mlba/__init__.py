@@ -1,9 +1,11 @@
-'''
-Utility functions for "Data Mining for Business Analytics: Concepts, Techniques, and 
-Applications in Python"
+"""
+Utility functions for
 
-(c) 2019, 2024 Galit Shmueli, Peter C. Bruce, Peter Gedeck 
-'''
+Machine Learning for Business Analytics:
+Concepts, Techniques, and Applications in Python
+
+(c) 2019-2025 Galit Shmueli, Peter C. Bruce, Peter Gedeck
+"""
 import os
 import matplotlib as mpl
 from .version import __version__

@@ -1,9 +1,11 @@
-'''
-Utility functions for "Data Mining for Business Analytics: Concepts, Techniques, and 
-Applications in Python"
+"""
+Utility functions for
 
-(c) 2019, 2024 Galit Shmueli, Peter C. Bruce, Peter Gedeck 
-'''
+Machine Learning for Business Analytics:
+Concepts, Techniques, and Applications in Python
+
+(c) 2019-2025 Galit Shmueli, Peter C. Bruce, Peter Gedeck
+"""
 import unittest
 from io import StringIO
 from contextlib import redirect_stdout
@@ -15,7 +17,7 @@ from mlba import printTermDocumentMatrix
 
 
 class TestTextMining(unittest.TestCase):
-    def test_printTermDocumentMatrix(self):
+    def test_printTermDocumentMatrix(self) -> None:
         text = ['this is the first sentence.',
                 'this is a second sentence.',
                 'the third sentence is here.']
@@ -29,6 +31,6 @@ class TestTextMining(unittest.TestCase):
         with redirect_stdout(out):
             printTermDocumentMatrix(count_vect, counts)
         s = out.getvalue()
-        self.assertIn('S1  S2  S3', s)
-        self.assertIn('first      1   0   0', s)
-        self.assertIn('the        1   0   1', s)
+        assert 'S1  S2  S3' in s
+        assert 'first      1   0   0' in s
+        assert 'the        1   0   1' in s
