@@ -7,6 +7,7 @@ Applications in Python"
 from collections.abc import Iterable
 import io
 from typing import Literal
+from tempfile import TemporaryDirectory
 import pandas as pd
 import numpy as np
 import matplotlib.pyplot as plt
@@ -17,13 +18,13 @@ try:
 except ImportError:
     Image = None
 try:
-    import pydotplus
+    import graphviz
 except ImportError:
-    pydotplus = None
+    graphviz = None
 
 
 def liftChart(data: pd.DataFrame, *, ranking: str | None = None, actual: str | None = None,
-              title: str = 'Decile-wise Lift Chart', labelBars: bool = True,
+              title: str = 'Decile-wise lift chart', labelBars: bool = True,
               ax: Axes | None = None, figsize: Iterable[float] = None):
     """ Create a decile lift chart using ranking and predicted values 
 
@@ -66,7 +67,7 @@ def liftChart(data: pd.DataFrame, *, ranking: str | None = None, actual: str | N
 
 def gainsChart(data: pd.DataFrame, *, ranking: str | None = None, actual: str | None = None,
                event_level: int | str = 1, type: Literal['classification', 'regression'] = 'classification',
-               color: str = 'C0', title='Cumulative Gains Chart', label: str | None = None,
+               color: str = 'C0', title='Cumulative gains chart', label: str | None = None,
                show_counts: bool = False,
                ax: Axes | None = None, figsize: Iterable[float] | None = None):
     """ Create a gains chart using ranking and predicted values 
@@ -125,7 +126,7 @@ def gainsChart(data: pd.DataFrame, *, ranking: str | None = None, actual: str | 
         ax.set_ylabel('# cumulative gains')
     else:
         ax.set_xlabel('Percent of cases')
-        ax.set_ylabel('Percent of samples found')
+        ax.set_ylabel('Percent of positive cases')
     return ax
 
 
@@ -142,8 +143,8 @@ def plotDecisionTree(decisionTree, feature_names=None, class_names=None, impurit
         rotate (optional): rotate the layout of the graph
         pdfFile (optional): provide pathname to create a PDF file of the graph
     """
-    if pydotplus is None:
-        return 'You need to install pydotplus to visualize decision trees'
+    if graphviz is None:
+        return 'You need to install graphviz and the graphviz package to visualize decision trees'
     if Image is None:
         return 'You need to install ipython to visualize decision trees'
     if class_names is not None:
@@ -152,10 +153,11 @@ def plotDecisionTree(decisionTree, feature_names=None, class_names=None, impurit
     export_graphviz(decisionTree, feature_names=feature_names, class_names=class_names, impurity=impurity,
                     label=label, out_file=dot_data, filled=True, rounded=True, special_characters=True,
                     max_depth=max_depth, rotate=rotate)
-    graph = pydotplus.graph_from_dot_data(dot_data.getvalue())
-    if pdfFile is not None:
-        graph.write_pdf(str(pdfFile))
-    return Image(graph.create_png())
+    graph = graphviz.Source(dot_data.getvalue())
+    with TemporaryDirectory() as tempdir:
+        if pdfFile is not None:
+            graph.render('dot', directory=tempdir, format='pdf', outfile=pdfFile)
+        return Image(graph.render('dot', directory=tempdir, format='png'))
 
 # Taken from scikit-learn documentation
 

@@ -4,4 +4,4 @@ Applications in Python"
 
 (c) 2019, 2024 Galit Shmueli, Peter C. Bruce, Peter Gedeck 
 '''
-__version__ = '1.9.31'
+__version__ = '2.0rc1'

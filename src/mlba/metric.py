@@ -155,3 +155,16 @@ def classificationSummary(*, y_true, y_pred, class_names=None):
     for cls, row in zip(labels, cm):
         print(fmt1.format(cls), end='')
         print(fmt2.format(*row))
+
+
+def classificationMetrics(*, y_true, y_pred):
+    """ Calculate and return classification metrics
+
+    Input:
+        y_true: actual values
+        y_pred: predicted values
+    """
+    accuracy = accuracy_score(y_true, y_pred)
+    return {
+        'accuracy': accuracy,
+    }
