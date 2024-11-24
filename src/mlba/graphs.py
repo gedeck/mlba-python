@@ -55,6 +55,7 @@ def liftChart(data: pd.DataFrame, *, ranking: str | None = None, actual: str | N
     meanResponse.index = (meanResponse.index + 1) * 10
 
     ax = meanResponse.plot.bar(color='C0', ax=ax, figsize=figsize)
+    assert ax is not None
     ax.set_ylim(0, 1.12 * meanResponse.max() if labelBars else None)
     ax.set_xlabel('Percentile')
     ax.set_ylabel('Decile mean / global mean')
@@ -114,6 +115,7 @@ def gainsChart(data: pd.DataFrame, *, ranking: str | None = None, actual: str | 
 
     if ax is None:
         _, ax = plt.subplots(figsize=figsize)
+    assert ax is not None
     if type == 'classification':
         ax.plot([0, optimal_gains * nTotal, nTotal], [0, nActual, nActual], color='lightgrey')
     ax = gains_df.plot(x='records', y='cumGains', color=color, label=label, legend=False,
