@@ -45,7 +45,7 @@ jobs:
       - name: Run mypy
         run: mypy --install-types --cache-dir ./.mypy-cache ./src
     
-  build:
+  pytest:
     runs-on: ubuntu-latest
     strategy:
       matrix:
