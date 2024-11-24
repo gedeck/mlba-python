@@ -1,6 +1,6 @@
 [![PyPI](https://badge.fury.io/py/mlba.svg)](https://pypi.org/project/mlba/)
 [![PyPI - Python Version](https://img.shields.io/pypi/pyversions/mlba)](https://pypi.org/project/mlba/)
-![Python](https://github.com/gedeck/mlba/actions/workflows/mlba-tests.yml/badge.svg)
+![Python](https://github.com/gedeck/mlba/actions/workflows/build.yml/badge.svg)
 
 # Machine Learning for Business Analytics: Concepts, Techniques, and  Applications in Python
 
