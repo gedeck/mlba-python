@@ -1,7 +1,7 @@
-name: deep-learning-similarity
+name: mlba
 
 concurrency:
-  group: deep-learning-similarity-${{ github.ref }}
+  group: mlba-${{ github.ref }}
   cancel-in-progress: true
   
 on: [push, workflow_dispatch]
