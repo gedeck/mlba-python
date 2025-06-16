@@ -39,6 +39,7 @@ lint.ignore = [
     "SIM108", "SIM117",
     "SLF001",
     "T201",  # print statements
+    "TC006",
     "PLR0124",
     "PYI024",
 ]

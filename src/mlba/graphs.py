@@ -9,7 +9,7 @@ Concepts, Techniques, and Applications in Python
 from collections.abc import Iterable
 import io
 from os import PathLike
-from typing import Literal
+from typing import Literal, NamedTuple
 from tempfile import TemporaryDirectory
 import pandas as pd
 import numpy as np
@@ -88,6 +88,33 @@ def gainsChart(data: pd.DataFrame, *, ranking: str | None = None, actual: str | 
     """
     if ranking is None or actual is None:
         raise ValueError('Column names for ranking and actual must be provided')
+
+    gainsChartData = _getGainsChartData(data, ranking=ranking, actual=actual,
+                                        event_level=event_level, type=type,
+                                        show_counts=show_counts)
+    if ax is None:
+        _, ax = plt.subplots(figsize=figsize)
+    assert ax is not None
+    if type == 'classification':
+        ax.plot([0, gainsChartData.optimal_gains * gainsChartData.nTotal, gainsChartData.nTotal],
+                [0, gainsChartData.nActual, gainsChartData.nActual],
+                color='lightgrey')
+    ax = gainsChartData.gains_df.plot(x='records', y='cumGains', color=color, label=label, legend=False,
+                                      ax=ax)
+
+    # Add line for random gain
+    ax.plot([0, gainsChartData.nTotal],
+            [0, gainsChartData.nActual], linestyle='--', color='k')
+    ax.set_title(title)
+    ax.set_xlabel(gainsChartData.xlabel)
+    ax.set_ylabel(gainsChartData.ylabel)
+    return ax
+
+
+def _getGainsChartData(data: pd.DataFrame, *, ranking: str | None = None, actual: str | None = None,
+                      event_level: int | str = 1, type: Literal['classification', 'regression'] = 'classification',  # noqa: A002
+                      show_counts: bool = False,
+                      ) -> 'GainsChartData':
     data = data.sort_values(by=[ranking], ascending=False, ignore_index=True)
     if type == 'classification':
         gains = pd.Series([1 if g == event_level else 0 for g in data[actual]])
@@ -107,30 +134,36 @@ def gainsChart(data: pd.DataFrame, *, ranking: str | None = None, actual: str | 
     gains_df = pd.DataFrame(
         {'records': list(range(nTotal + 1)), 'cumGains': cumGains})
 
+    xlabel = '# records'
     if type == 'classification' and not show_counts:
         gains_df['records'] = 100 * gains_df['records'] / nTotal
         gains_df['cumGains'] = 100 * gains_df['cumGains'] / nActual
         nTotal = 100
         nActual = 100
+        xlabel = 'Percent of cases'
 
-    if ax is None:
-        _, ax = plt.subplots(figsize=figsize)
-    assert ax is not None
-    if type == 'classification':
-        ax.plot([0, optimal_gains * nTotal, nTotal], [0, nActual, nActual], color='lightgrey')
-    ax = gains_df.plot(x='records', y='cumGains', color=color, label=label, legend=False,
-                       ax=ax)
-
-    # Add line for random gain
-    ax.plot([0, nTotal], [0, nActual], linestyle='--', color='k')
-    ax.set_title(title)
     if show_counts:
-        ax.set_xlabel('# records')
-        ax.set_ylabel('# cumulative gains')
+        ylabel = '# cumulative gains'
     else:
-        ax.set_xlabel('Percent of cases')
-        ax.set_ylabel('Percent of positive cases')
-    return ax
+        ylabel = 'Percent of positive cases'
+
+    return GainsChartData(
+        gains_df=gains_df,
+        xlabel=xlabel,
+        ylabel=ylabel,
+        nTotal=nTotal,
+        nActual=nActual,
+        optimal_gains=optimal_gains,
+    )
+
+
+class GainsChartData(NamedTuple):
+    gains_df: pd.DataFrame
+    xlabel: str
+    ylabel: str
+    nTotal: int
+    nActual: int
+    optimal_gains: float
 
 
 def plotDecisionTree(decisionTree: DecisionTreeClassifier, *, feature_names: list[str] | None = None,
