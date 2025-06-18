@@ -3,10 +3,11 @@
 @import "{{ site.theme }}";
 
 $color-footer: #f2f2f2;
+$color-title: white;
 $font-grey: #1B4F72;
-$color-1: #FF9F00;
-$color-2: #FFB347;
-$color-github-link: #4169E1;
+$color-1: #227eb4;
+$color-2: #58b4d9;
+$color-github-link: #0087BC;
 
 
 table {
@@ -32,20 +33,17 @@ footer p, footer a {
 }
 
 #header_wrap {
-    background: $color-1;
-    background: -moz-linear-gradient(top, $color-2, $color-1);
-    background: -webkit-linear-gradient(top, $color-2, $color-1);
-    background: -ms-linear-gradient(top, $color-2, $color-1);
-    background: -o-linear-gradient(top, $color-2, $color-1);
-    background: linear-gradient(to top, $color-2, $color-1);
-    
+    background-image: url(img/sdsa-background.png);
+    background-size: 100% auto;
+    background-position-y: bottom;
+
     a {
         color: $font-grey;
     }
 }
 
 #project_title, #project_tagline {
-    color: $font-grey;
+    color: $color-title;
     text-shadow: none;
 }
 
