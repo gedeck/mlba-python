@@ -23,7 +23,9 @@
 
 ## Collection of utility functions for "Machine Learning for Business Analytics" 
 
-For more information about the book and instructor material go to [https://www.dataminingbook.com/editions/python-2nd-edition-june-2025](https://www.dataminingbook.com/editions/python-2nd-edition-june-2025).
+This repository contains the source code of the `mlba` package, a collection of utility functions and datasets used in the book. 
+
+For more information about the book, the source code to the chapters, and instructor material go to [https://www.dataminingbook.com/editions/python-2nd-edition-june-2025](https://www.dataminingbook.com/editions/python-2nd-edition-june-2025).
 
 
 ## Installation
