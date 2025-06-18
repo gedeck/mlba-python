@@ -4,7 +4,7 @@
 
 <table>
 <tr>
-<td><img src="img/sdsa-cover.png" width=275></td>
+<td><img src="img/mlba-python-cover.png" width=275></td>
 <td>
     <h3>Machine Learning for Business Analytics</h3>
     <p>by Galit Shmueli, Peter C. Bruce, <a href="https://www.amazon.com/Peter-Gedeck/e/B082BJZJKX/">Peter Gedeck</a>, Nitin R. Patel</p>
