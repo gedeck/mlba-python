@@ -10,7 +10,7 @@ Collection of utility functions used in the book
 > Galit Shmueli, Peter C. Bruce, Peter Gedeck, and Nitin R. Patel
 > (c) 2025 John Wiley & Sons, Inc. 
 
-Code for the book and the used datasets are available on https://www.dataminingbook.com/book/python-edition.
+Code for the book and the used datasets are available on https://www.dataminingbook.com/editions/python-2nd-edition-june-2025.
 
 
 ## Installation
