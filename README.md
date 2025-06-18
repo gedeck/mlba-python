@@ -11,6 +11,11 @@
     <ul>
     <li>Publisher: Wiley; 2nd edition (2025)</li>
     <li>ISBN-13: 978-1-119-54984-0</li>
+    <li>Buy from 
+      <a href="https://www.amazon.com/Machine-Learning-Business-Analytics-Applications/dp/1394286791/">Amazon</a>,
+      <a href="https://www.barnesandnoble.com/w/machine-learning-for-business-analytics-galit-shmueli/1146602430">Barnes & Noble</a>
+    </li>
+    <li>Book webpage: <a href="https://www.dataminingbook.com/editions/python-2nd-edition-june-2025">https://www.dataminingbook.com/editions/python-2nd-edition-june-2025</a></li>
     </ul>
 </td>
 </tr>
