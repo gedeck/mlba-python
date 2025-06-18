@@ -15,7 +15,6 @@
 </td>
 </tr>
 </table>
-<img src="img/mlba-python-background.png">
 
 ## Collection of utility functions for "Machine Learning for Business Analytics" 
 
