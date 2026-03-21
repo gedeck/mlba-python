@@ -4,7 +4,7 @@ Utility functions for
 Machine Learning for Business Analytics:
 Concepts, Techniques, and Applications in Python
 
-(c) 2019-2025 Galit Shmueli, Peter C. Bruce, Peter Gedeck
+(c) 2019-2026 Galit Shmueli, Peter C. Bruce, Peter Gedeck
 """
 import os
 import matplotlib as mpl
@@ -19,4 +19,4 @@ from .graphs import plotDecisionTree, liftChart, gainsChart, textDecisionTree
 from .metric import regressionSummary, classificationSummary, regressionMetrics, classificationMetrics
 from .metric import AIC_score, BIC_score, adjusted_r2_score
 from .textMining import downloadGloveModel, printTermDocumentMatrix
-from .data import load_data, get_data_file
+from .data import load_data, get_data_file, list_datasets

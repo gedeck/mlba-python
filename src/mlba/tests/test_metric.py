@@ -4,7 +4,7 @@ Utility functions for
 Machine Learning for Business Analytics:
 Concepts, Techniques, and Applications in Python
 
-(c) 2019-2025 Galit Shmueli, Peter C. Bruce, Peter Gedeck
+(c) 2019-2026 Galit Shmueli, Peter C. Bruce, Peter Gedeck
 """
 import unittest
 from collections import namedtuple
