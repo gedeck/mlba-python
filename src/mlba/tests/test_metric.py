@@ -27,7 +27,7 @@ class TestMetric(unittest.TestCase):
         y_pred = [1, 3, 2, 5, 4]
 
         r2 = r2_score(y_true, y_pred)
-        assert r2 == 0.6
+        assert r2 == pytest.approx(0.6, abs=1e-3)
 
         for df in range(4):
             n = len(y_true)
