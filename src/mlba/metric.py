@@ -29,7 +29,7 @@ def adjusted_r2_score(y_true: REGRESSION_YTYPES, y_pred: REGRESSION_YTYPES, mode
     if p >= n - 1:
         return 0
     r2 = r2_score(y_true, y_pred)
-    return cast(float, 1 - (1 - r2) * (n - 1) / (n - p - 1))
+    return cast('float', 1 - (1 - r2) * (n - 1) / (n - p - 1))
 
 
 def AIC_score(*, y_true: REGRESSION_YTYPES | CLASSIFICATION_YTYPES, y_pred: REGRESSION_YTYPES | CLASSIFICATION_YTYPES,
@@ -53,7 +53,7 @@ def AIC_score(*, y_true: REGRESSION_YTYPES | CLASSIFICATION_YTYPES, y_pred: REGR
         resid = np.array(y_true) - np.array(y_pred)
         sse = np.sum(resid ** 2)
     constant = n + n * np.log(2 * np.pi)
-    return cast(float, n * math.log(sse / n) + constant + 2 * (p + 1))
+    return cast('float', n * math.log(sse / n) + constant + 2 * (p + 1))
 
 
 def BIC_score(*, y_true: REGRESSION_YTYPES, y_pred: REGRESSION_YTYPES, model: LinearRegression | None = None,
